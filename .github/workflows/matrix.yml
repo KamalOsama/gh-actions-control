@@ -1,10 +1,13 @@
 name: Matrix Demo
 
-on: push
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     continue-on-error: true
+
+    runs-on: ${{matrix.operating-system}}
+
     strategy:
       matrix:
         node-version: [12, 14, 16]
@@ -16,7 +19,6 @@ jobs:
           - node-version: 12
             operating-system: ubuntu-latest
 
-    runs-on: ${{matrix.operating-system}}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -28,3 +30,6 @@ jobs:
         run: npm ci
       - name: Build project
         run: npm run build
+
+  deploy:
+    uses: ./.github/workflows/reusable.yml

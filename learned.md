@@ -20,3 +20,7 @@
 - matrix
   - Default: If one value in the matrix failed, The other jobs wich uses the other values will stop
   - To unable this, Use continue-on-error on the job level
+
+- include & exclude
+  - include: include a combination that is not in the matrix to be executed
+  - exlude: exludes a certain combination inthe matrix to be executed
