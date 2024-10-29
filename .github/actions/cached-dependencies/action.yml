@@ -18,11 +18,7 @@ runs:
       with:
         path: node_modules
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-    - name: Set GitHub Path
-      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
+
     - name: Install dependencies
       if: ${{steps.cache.outputs.cache-hit}} != "true" || ${{inputs.caching}} != true
       run: npm ci
