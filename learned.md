@@ -16,3 +16,7 @@
 - conclusion vs outcome
   - outcome evaluates the outcome before continue-on-error executes, outputs the value before the step continues if an error happens, Thus might return false due to step failing
   - conclusion evaluates the outcome after continue-on-error executes, outputs the value after the step continues if an error happens, Thus will always return true,Only if there is a syntax, network, etc.. errors
+
+- matrix
+  - Default: If one value in the matrix failed, The other jobs wich uses the other values will stop
+  - To unable this, Use continue-on-error on the job level
