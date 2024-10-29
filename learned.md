@@ -28,3 +28,8 @@
 - Reusable workflows
   - to make it reusable ==> `on: workflow_call`
   - to call it ==> `./.github/workflows/{filename}`
+
+- inputs:
+  - it's the paramters of the workflow
+  - to provide paramters we use `with:`
+  - inputs can be secrets, use `secrets:` to declare secret parameters

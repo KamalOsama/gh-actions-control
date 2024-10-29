@@ -43,12 +43,6 @@ jobs:
       - name: Test code
         run: npm run test
         id: run-tests
-      - name: Upload test report
-        if: failure() && ${{steps.run-tests.outcome}} == 'failure'
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test.json
 
   build:
     needs: test
@@ -84,13 +78,12 @@ jobs:
       # So you either need to hard code OR
       # you need to output the env variable
       artifact-name: ${{needs.build.outputs.artifactFilename}}
+    secrets: # passing secrets as arguments
+      github-token: ${{secrets.GITHUB_TOKEN}}
 
-  report:
-    needs: [lint, deploy]
-    if: failure()
+  printDeployInfo:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Output Info
-        run: |
-          echo "Something went wrong"
-          echo "${{github}}"
+      - name: print deploy output
+        run: echo "${{needs.deploy.outputs}}"

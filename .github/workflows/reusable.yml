@@ -8,14 +8,27 @@ on:
         required: true
         default: dist
         type: string
+    secrets:  # you can provide secrets as paramters
+      github-token:
+        required: false
+    outputs:
+      artifact-info:
+        description: some info about the artifact argument provided here
+        value: ${{jobs.deploy.outputs.outcome}} + 15/5/2024 + 15:00
+
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    outputs:
+      outcome: ${{steps.print.outputs.outcome}}
     steps:
       - name: Get Code
         uses: actions/download-artifact@v3
         with:
           name: ${{inputs.artifact-name}}
       - name: Output Info
-        run: echo "Deploying... ${{inputs.artifact-name}}"
+        id: print
+        run: |
+          echo "Deploying... ${{inputs.artifact-name}}"
+          echo "outcome=${{inputs.artifact-name}}" >> $GITHUB_OUTPUT
