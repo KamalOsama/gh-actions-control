@@ -86,4 +86,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: print deploy output
-        run: echo "${{needs.deploy.outputs}}"
+        run: echo "${{needs.deploy.outputs.artifact-info}}"
