@@ -30,6 +30,3 @@ jobs:
         run: npm ci
       - name: Build project
         run: npm run build
-
-  deploy:
-    uses: ./.github/workflows/reusable.yml

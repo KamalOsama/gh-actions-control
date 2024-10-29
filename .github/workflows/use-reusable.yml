@@ -1,0 +1,7 @@
+name: use wokflow call
+
+on: [push]
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable.yml
