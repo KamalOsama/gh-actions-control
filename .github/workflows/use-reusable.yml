@@ -1,7 +1,96 @@
 name: use wokflow call
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+
+env:
+  artifactFilename: "dist-files"
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: ${{steps.cache.outputs.cache-hit}} != "true"
+        run: npm ci
+      - name: Lint code
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: ${{steps.cache.outputs.cache-hit}} != "true"
+        run: npm ci
+      - name: Test code
+        run: npm run test
+        id: run-tests
+      - name: Upload test report
+        if: failure() && ${{steps.run-tests.outcome}} == 'failure'
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      artifactFilename: ${{env.artifactFilename}}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: ${{steps.cache.outputs.cache-hit}} != "true"
+        run: npm ci
+      - name: Build website
+        id: build-website
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{env.artifactFilename}}
+          path: dist
+
   deploy:
+    needs: build
     uses: ./.github/workflows/reusable.yml
+    with:
+      # artifact-name: dist-files # the "with" doesn't see top level variables (env)
+      # So you either need to hard code OR
+      # you need to output the env variable
+      artifact-name: ${{needs.build.outputs.artifactFilename}}
+
+  report:
+    needs: [lint, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Info
+        run: |
+          echo "Something went wrong"
+          echo "${{github}}"

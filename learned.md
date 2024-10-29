@@ -24,3 +24,7 @@
 - include & exclude
   - include: include a combination that is not in the matrix to be executed
   - exlude: exludes a certain combination inthe matrix to be executed
+
+- Reusable workflows
+  - to make it reusable ==> `on: workflow_call`
+  - to call it ==> `./.github/workflows/{filename}`
