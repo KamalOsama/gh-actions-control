@@ -14,15 +14,8 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: ${{steps.cache.outputs.cache-hit}} != "true"
-        run: npm ci
+      - name: load & cache dep
+        uses: ./.github/actions/cached-dependencies/action.yml
       - name: Lint code
         run: npm run lint
 
@@ -31,15 +24,8 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: ${{steps.cache.outputs.cache-hit}} != "true"
-        run: npm ci
+      - name: load & cache dep
+        uses: ./.github/actions/cached-dependencies/action.yml
       - name: Test code
         run: npm run test
         id: run-tests
@@ -52,15 +38,8 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: ${{steps.cache.outputs.cache-hit}} != "true"
-        run: npm ci
+      - name: load & cache dep
+        uses: ./.github/actions/cached-dependencies/action.yml
       - name: Build website
         id: build-website
         run: npm run build
@@ -72,7 +51,7 @@ jobs:
 
   deploy:
     needs: build
-    uses: ./.github/workflows/reusable.yml
+    uses: ./.github/workflows/reusable.yml   # by default the outputs of this reusable will be outputs of this job
     with:
       # artifact-name: dist-files # the "with" doesn't see top level variables (env)
       # So you either need to hard code OR

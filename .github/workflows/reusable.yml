@@ -11,7 +11,7 @@ on:
     secrets:  # you can provide secrets as paramters
       github-token:
         required: false
-    outputs:
+    outputs:  # you can output values in reusables
       artifact-info:
         description: some info about the artifact argument provided here
         value: ${{jobs.deploy.outputs.outcome}} + 15/5/2024 + 15:00
